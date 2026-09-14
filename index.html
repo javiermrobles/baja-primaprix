@@ -87,7 +87,7 @@
       <span class="empleado-id" id="empleado-id-texto">—</span>
     </p>
     <a href="#" class="btn-abrir" id="btn-abrir">🟢 Abrir Consulta Usuario</a>
-    <div class="hint">
+    <div class="hint" id="hint-texto">
       Si no se abre nada, comprueba que Consulta Usuario está instalado en este equipo.
     </div>
   </div>
@@ -113,12 +113,29 @@
     const btn = document.getElementById('btn-abrir');
     btn.href = destino;
 
+    function abrirYCerrar() {
+      window.location.href = destino;
+      // Los navegadores solo dejan cerrar por script las pestañas que
+      // ellos mismos abrieron por script; una pestaña abierta al
+      // pulsar un enlace normal (como el de Jira) casi nunca cumple
+      // esa condición, así que window.close() aquí es un intento
+      // best-effort: funciona en algunos casos (p.ej. si es la única
+      // pestaña de una ventana nueva) y en el resto simplemente no
+      // hace nada. Por eso el texto de abajo cambia igualmente, para
+      // que quien lo use sepa que ya puede cerrarla a mano si no se
+      // cierra sola.
+      document.getElementById('hint-texto').textContent =
+        'Consulta Usuario debería haberse abierto ya. Puedes cerrar esta pestaña.';
+      setTimeout(() => window.close(), 400);
+    }
+
+    btn.addEventListener('click', (e) => { e.preventDefault(); abrirYCerrar(); });
+
     // Intento automático: algunos navegadores permiten navegar a un
     // esquema personalizado sin necesitar un clic explícito del
     // usuario. Si el navegador lo bloquea, el botón de arriba sigue
-    // ahí como alternativa manual (siempre visible, no solo de
-    // respaldo).
-    setTimeout(() => { window.location.href = destino; }, 300);
+    // ahí como alternativa manual.
+    setTimeout(abrirYCerrar, 300);
   }
 </script>
 
